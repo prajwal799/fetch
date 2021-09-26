@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movies</title>
+</head>
+ <style>
+     body{
+         background-color: #181818;
+         color: white;
+         margin: 0px;
+         padding: 0px;
+     }
+     #container{
+         width: 100%;
+         display: flex;
+     }
+     #container  > div >div {
+         width: 30%;
+         height: 230px;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 5px;
+         display: flex;
+     }  
+     #container > div > div  > div{
+         margin-left: 20px;
+     } 
+
+     #container  img{
+         margin-top: 10px;
+         margin-left: 1%;
+         width: 200px;
+         height: 200px;
+     }
+     #search{
+         width: 200px;
+         height: 20px;
+         
+         background-color: black;
+         border: 1px solid white;
+         color: white;
+         margin-left: 60%;
+         
+     }
+     #search_div{
+         width: 100%;
+         height: 50px;
+         position: fixed;
+         box-shadow: 0 0 10px rgba(0,0, 0, 0.2);
+         background-color: black;
+         margin-top:0px;
+     }
+
+ </style>
+<body>
+
+    <div id="search_div">
+        <input placeholder="search" id="search"/><br/><br/>
+    </div><br/><br/><br/><br/>
+    <div id="container">
+
+    </div>
+    <script>
+            // fetch("http://www.omdbapi.com/?i=tt3896198&apikey=87df08f")
+        // fetch("https://fake-movie-database-api.herokuapp.com/api?s=batman")
+        // fetch("https://reqres.in/api/users")
+        
+        // fetch("https://imdb-api.com/en/API/Title/k_mr8uke5g/tt1375666/FullActor,Posters")
+          fetch("https://imdb-api.com/en/API/Top250Movies/k_mr8uke5g")
+            .then(function(response){
+               console.log(response)
+               return response.json();
+           })
+           .then(function(response){
+               console.log(response.items)
+               createMovies(response.items)
+           })
+           .catch(function(error){
+
+           })
+
+           function createMovies(items){
+               const container = document.getElementById("container");
+               container.innerHTML= "";
+               const div = document.createElement("div");
+                    var i =0;
+               for(let userData of items){
+                  
+                   const card = createList(userData);
+                   if(i%3 == 3){
+                       card.style.clear="left";
+                   }
+                   else{
+                    card.style.float="left";
+                   }
+                   i++;
+                   div.append(card);
+               }
+               container.append(div)
+
+           }
+
+           function createList(userData){
+               const div = document.createElement("div");
+            //    div.className = "List - Movies";
+               
+              const img = document.createElement("img");
+               img.src = userData.image;
+            // img.src = userData.Poster;
+
+               
+               var rigth = document.createElement("div");
+
+               const movie = document.createElement("h2");
+               movie.textContent = "Movie:" + userData.fullTitle;
+            // movie.textContent = "Movie:"+userData.Title;
+               
+
+               const rating = document.createElement("h2");
+               rating.textContent = "Rating:"+ userData.imDbRating;
+
+               const rank = document.createElement("h3");
+               rank.textContent = "Rank:"+userData.rank;
+
+            // rigth.append(movie)
+               rigth.append(movie,rating,rank)
+               div.append(img,rigth);
+
+               return div
+           }
+    </script>
+</body>
+</html>
