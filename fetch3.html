@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movies 3</title>
+</head>
+ <style>
+     body{
+         background-color: #181818;
+         color: white;
+         margin: 0px;
+         padding: 0px;
+     }
+     #container{
+         width: 100%;
+         display: flex;
+     }
+     #container  > div >div {
+         width: 30%;
+         height: 230px;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 5px;
+         display: flex;
+     }  
+     #container > div > div  > div{
+         margin-left: 20px;
+     } 
+
+     #container  img{
+         margin-top: 10px;
+         margin-left: 1%;
+         width: 200px;
+         height: 200px;
+     }
+     #search{
+         width: 200px;
+         height: 30px;
+         margin-top: 15px;
+         background-color: black;
+         border: 1px solid white;
+         color: white;
+         margin-left: 60%;
+         
+     }
+     #search_div{
+         width: 100%;
+         height: 50px;
+         position: fixed;
+         box-shadow: 0 0 10px rgba(0,0, 0, 0.2);
+         background-color: black;
+         margin-top:0px;
+     }
+     #searchbtn{
+         background-color: black;
+         color: blanchedalmond;
+         border: none;
+     }
+
+ </style>
+<body>
+
+    <div id="search_div">
+        <input placeholder="search" id="search"/>
+        <button id="searchbtn">Search</button>
+        <br/><br/>
+    </div><br/><br/><br/><br/>
+    <div id="container">
+
+    </div>
+    <script>
+            
+          fetch("https://imdb-api.com/en/API/Top250Movies/k_mr8uke5g")
+            .then(function(response){
+               console.log(response)
+               return response.json();
+           })
+           .then(function(response){
+               createMovies(response.items)
+
+               const searchbtn = document.getElementById('searchbtn');
+                searchbtn.addEventListener("click",search);
+           })
+           .catch(function(error){
+
+           })
+           
+           function createMovies(items){
+               const container = document.getElementById("container");
+               container.innerHTML= "";
+               const div = document.createElement("div");
+               console.log("DSc");
+                    var i =0;
+                    
+               for(let userData of items){
+                  
+                   const card = createList(userData);
+                   if(i%3 == 3){
+                       card.style.clear="left";
+                   }
+                   else{
+                    card.style.float="left";
+                   }
+                   i++;
+                   div.append(card);
+               }
+               container.append(div)
+
+           }
+
+           
+           function createList(userData){
+               const div = document.createElement("div");
+            //    div.className = "List - Movies";
+               
+              const img = document.createElement("img");
+               img.src = userData.image;
+               
+               var rigth = document.createElement("div");
+
+               const movie = document.createElement("h2");
+               movie.textContent = "Movie:" + userData.fullTitle;
+
+               const rating = document.createElement("h2");
+               rating.textContent = "Rating:"+ userData.imDbRating;
+
+               const rank = document.createElement("h3");
+               rank.textContent = "Rank:"+userData.rank;
+
+               rigth.append(movie,rating,rank)
+               div.append(img,rigth);
+
+               return div
+           }
+
+
+        function search(){
+            var search_value = document.getElementById('search').value;
+               if(!search_value){
+                   alert('please put Data')
+                   return
+               }
+               fetch("https://imdb-api.com/en/API/Top250Movies/k_mr8uke5g")
+            .then(function(response){
+               return response.json();
+           })
+           .then(function(response){
+               searchbtn(response.items)
+           })
+
+            function searchbtn(items){
+                
+                 var count = 0;
+                for(let userData of items){
+                    if(userData.fullTitle == search_value){
+
+                        const div = document.getElementById('container');
+                       div.innerHTML="";
+                       // append the data which is match on search box
+
+                       if(userData.imDbRating >= 8.5){
+                           const tag = document.createElement('img');
+                           tag.src ="data:image/png;base64,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";
+                           tag.style.width="30px";
+                           tag.style.height="30px";
+                           div.append(tag)
+                        }
+                       const img = document.createElement("img");
+                       img.src = userData.image;
+
+                        var rigth = document.createElement("div");
+
+                        const movie = document.createElement("h2");
+                        movie.textContent = "Movie:"+userData.fullTitle;
+
+                        const rating = document.createElement("h2");
+                        rating.textContent = "Rating:"+ userData.imDbRating;
+
+                        const rank = document.createElement("h3");
+                        rank.textContent = "Rank:"+userData.rank;
+
+                        div.style.marginLeft="35%";
+                        div.style.border="1px solid white";
+                        div.style.width="350px"
+
+                        rigth.append(movie , rating , rank)
+                       div.append(img,rigth);
+
+                       count++;
+                    
+                        
+                    }
+                }
+                if(count == 0){
+                    var div = document.getElementById("container");
+                        div.innerHTML="";
+                    const img = document.createElement("img");
+                img.src = "https://c.tenor.com/oVIT2xJb8zwAAAAC/Movie-not-there-not-that.gif";
+                    img.style.marginLeft="40%";
+
+                    div.append(img);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
