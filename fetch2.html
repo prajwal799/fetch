@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>movies 2</title>
+</head>
+ <style>
+     body{
+         background-color: #181818;
+         color: white;
+         margin: 0px;
+         padding: 0px;
+     }
+     #container{
+         width: 100%;
+         display: flex;
+     }
+     #container  > div >div {
+         width: 30%;
+         height: 230px;
+         margin-left: 3%;
+         margin-top: 10px;
+         margin-bottom: 5px;
+         display: flex;
+     }  
+     #container > div > div  > div{
+         margin-left: 20px;
+     } 
+
+     #container  img{
+         margin-top: 10px;
+         margin-left: 1%;
+         width: 200px;
+         height: 200px;
+     }
+     #search{
+         width: 200px;
+         height: 30px;
+         margin-top: 15px;
+         background-color: black;
+         border: 1px solid white;
+         color: white;
+         margin-left: 60%;
+         
+     }
+     #search_div{
+         width: 100%;
+         height: 50px;
+         position: fixed;
+         box-shadow: 0 0 10px rgba(0,0, 0, 0.2);
+         background-color: black;
+         margin-top:0px;
+     }
+     #searchbtn{
+         background-color: black;
+         color: blanchedalmond;
+         border: none;
+     }
+
+ </style>
+<body>
+
+    <div id="search_div">
+        <input placeholder="search" id="search"/>
+        <button id="searchbtn">Search</button>
+        <br/><br/>
+    </div><br/><br/><br/><br/>
+    <div id="container">
+
+    </div>
+    <script>
+            
+          fetch("https://imdb-api.com/en/API/Top250Movies/k_mr8uke5g")
+            .then(function(response){
+               console.log(response)
+               return response.json();
+           })
+           .then(function(response){
+               createMovies(response.items)
+
+               const searchbtn = document.getElementById('searchbtn');
+                searchbtn.addEventListener("click",search);
+           })
+           .catch(function(error){
+
+           })
+           
+           function createMovies(items){
+               const container = document.getElementById("container");
+               container.innerHTML= "";
+               const div = document.createElement("div");
+               console.log("DSc");
+                    var i =0;
+                    
+               for(let userData of items){
+                  
+                   const card = createList(userData);
+                   if(i%3 == 3){
+                       card.style.clear="left";
+                   }
+                   else{
+                    card.style.float="left";
+                   }
+                   i++;
+                   div.append(card);
+               }
+               container.append(div)
+
+           }
+
+           
+           function createList(userData){
+               const div = document.createElement("div");
+            //    div.className = "List - Movies";
+               
+              const img = document.createElement("img");
+               img.src = userData.image;
+               
+               var rigth = document.createElement("div");
+
+               const movie = document.createElement("h2");
+               movie.textContent = "Movie:" + userData.fullTitle;
+
+               const rating = document.createElement("h2");
+               rating.textContent = "Rating:"+ userData.imDbRating;
+
+               const rank = document.createElement("h3");
+               rank.textContent = "Rank:"+userData.rank;
+
+               rigth.append(movie,rating,rank)
+               div.append(img,rigth);
+
+               return div
+           }
+
+
+        function search(){
+            var search_value = document.getElementById('search').value;
+               if(!search_value){
+                   alert('please put Data')
+                   return
+               }
+               fetch("https://imdb-api.com/en/API/Top250Movies/k_mr8uke5g")
+            .then(function(response){
+               return response.json();
+           })
+           .then(function(response){
+               searchbtn(response.items)
+           })
+
+            function searchbtn(items){
+                 var count = 0;
+                for(let userData of items){
+                    if(userData.fullTitle == search_value){
+
+                        const div = document.getElementById('container');
+                       div.innerHTML="";
+                       // append the data which is match on search box
+                       const img = document.createElement("img");
+                       img.src = userData.image;
+
+                        var rigth = document.createElement("div");
+
+                        const movie = document.createElement("h2");
+                        movie.textContent = "Movie:"+userData.fullTitle;
+
+                        const rating = document.createElement("h2");
+                        rating.textContent = "Rating:"+ userData.imDbRating;
+
+                        const rank = document.createElement("h3");
+                        rank.textContent = "Rank:"+userData.rank;
+
+                        div.style.marginLeft="35%";
+
+                        rigth.append(movie , rating , rank)
+                       div.append(img,rigth);
+
+                       count++;
+                    
+                        
+                    }
+                }
+                if(count == 0){
+                    var div = document.getElementById("container");
+                        div.innerHTML="";
+                    const img = document.createElement("img");
+                img.src = "https://c.tenor.com/oVIT2xJb8zwAAAAC/Movie-not-there-not-that.gif";
+                    img.style.marginLeft="40%";
+
+                    div.append(img);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
